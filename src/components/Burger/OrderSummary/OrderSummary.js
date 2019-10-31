@@ -1,6 +1,10 @@
 import React from 'react'
-import classes from './OrderSummary.css'
+import {Link} from 'react-router-dom'
+import qs from 'qs'
+
 import Button from '../../../containers/UI/Button/Button'
+
+import classes from './OrderSummary.css'
 
 const orderSummary = props => {
     const ingredientSummary = Object.keys(props.ingredients)
@@ -32,12 +36,18 @@ const orderSummary = props => {
             >
                 Cancel
             </Button>
-            <Button
-                type="Success"
-                clicked={props.purchaseContinued}
+            <Link
+                to={{
+                    pathname: '/checkout',
+                    search: qs.stringify(props.ingredients),
+                }}
             >
-                Continue
-            </Button>
+                <Button
+                    type="Success"
+                >
+                    Continue
+                </Button>
+            </Link>
         </div>
     )
 }
