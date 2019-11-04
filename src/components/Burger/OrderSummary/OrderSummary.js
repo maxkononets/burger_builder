@@ -1,8 +1,9 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
 import qs from 'qs'
+import { connect } from 'react-redux';
 
-import Button from '../../../containers/UI/Button/Button'
+import Button from '../../UI/Button/Button'
 
 import classes from './OrderSummary.css'
 
@@ -36,12 +37,7 @@ const orderSummary = props => {
             >
                 Cancel
             </Button>
-            <Link
-                to={{
-                    pathname: '/checkout',
-                    search: qs.stringify(props.ingredients),
-                }}
-            >
+            <Link to={'/checkout'}>
                 <Button
                     type="Success"
                 >
@@ -52,4 +48,11 @@ const orderSummary = props => {
     )
 }
 
-export default orderSummary
+const mapStateToProps = state => {
+    return {
+        ingredients: state.burgerBuilder.ingredients,
+        price: state.burgerBuilder.price,
+    }
+};
+
+export default connect(mapStateToProps)(orderSummary)

@@ -1,4 +1,6 @@
 import React from 'react'
+import { connect } from 'react-redux';
+
 import BurgerIngredient from './BurgerIngredient/BurgerIngredient'
 import classes from './Burger.css'
 
@@ -24,4 +26,10 @@ const burger = props => {
     )
 }
 
-export default burger
+const mapStateToProps = state => {
+    return {
+        ingredients: state.burgerBuilder.ingredients,
+    }
+};
+
+export default connect(mapStateToProps)(burger)

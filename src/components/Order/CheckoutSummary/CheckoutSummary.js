@@ -1,6 +1,6 @@
 import React from 'react';
 import Burger from "./../../Burger/Burger";
-import Button from '../../../containers/UI/Button/Button';
+import Button from '../../UI/Button/Button';
 
 const checkoutSummary = props => {
     return (

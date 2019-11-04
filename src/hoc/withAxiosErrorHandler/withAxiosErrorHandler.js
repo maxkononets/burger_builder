@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 
-import Modal from '../../containers/UI/Modal/Modal';
+import Modal from '../../components/UI/Modal/Modal';
 import Auxiliary from '../Auxiliary/auxiliary';
 
 const withAxiosErrorHandler = (WrappedComponent, axios) => {

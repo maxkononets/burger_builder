@@ -1,49 +1,42 @@
-import React, {Component} from 'react'
-import Auxiliary from "../../hoc/Auxiliary/auxiliary"
-import Burger from '../../components/Burger/Burger'
-import BuildControls from '../../components/Burger/BuildControls/BuildControls'
-import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary'
-import Modal from '../UI/Modal/Modal'
-import Spinner from '../UI/Spinner/Spinner'
-import withAxiosErrorHandler from '../../hoc/withAxiosErrorHandler/withAxiosErrorHandler'
+import React, {Component} from 'react';
+import { connect } from 'react-redux';
 
-import axios from '../../axios-orders'
+import Auxiliary from "../../hoc/Auxiliary/auxiliary";
+import Burger from '../../components/Burger/Burger';
+import BuildControls from '../../components/Burger/BuildControls/BuildControls';
+import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
+import Modal from '../../components/UI/Modal/Modal';
+import Spinner from '../../components/UI/Spinner/Spinner';
+import withAxiosErrorHandler from '../../hoc/withAxiosErrorHandler/withAxiosErrorHandler';
 
-const INGREDIENTS_PRICES = {
-    salad: 0.4,
-    cheese: 0.5,
-    meat: 1.3,
-    bacon: 1.1,
-};
+import axios from '../../axios-orders';
 
 class BurgerBuilder extends Component {
     state = {
-        ingredients: null,
-        totalPrice: 0,
+        // ingredients: null,
+        // totalPrice: 0,
         purchasable: false,
         purchasing: false,
         loading: false,
         error: false
     };
 
-    componentDidMount() {
-        axios.get('/ingredients.json')
-            .then(response => this.setState({
-                ingredients: response.data
-            })).catch(() => this.setState({
-                error: true
-            }))
-    }
+    // componentDidMount() {
+        // axios.get('/ingredients.json')
+        //     .then(response => this.setState({
+        //         ingredients: response.data
+        //     })).catch(() => this.setState({
+        //         error: true
+        //     }))
+    // }
 
-    updatePurchasable = () => {
-        let sum = Object.values(this.state.ingredients)
+    updatePurchasable = (ingredients) => {
+        let sum = Object.values(ingredients)
             .reduce((sum, igKey) => {
                 return sum + igKey
             }, 0);
 
-        this.setState({
-            purchasable: sum > 0
-        })
+        return sum > 0;
     };
 
     purchaseHandler = () => {
@@ -55,60 +48,8 @@ class BurgerBuilder extends Component {
         this.setState({purchasing: false})
     };
 
-    // purchaseContinueHandler = () => {
-        // this.setState({ loading: true });
-        //
-        // const orderObject = {
-        //     ingredients: this.state.ingredients,
-        //     price: this.state.totalPrice,
-        //     customer: {
-        //         name: 'Max',
-        //         address: {
-        //             zipCode: '2131',
-        //             country: 'Ukraine',
-        //         },
-        //         email: 'mail@mail.com'
-        //     },
-        //     deliveryMethod: 'UkrPost'
-        // };
-        // axios.post(
-        //     'orders.json',
-        //     orderObject
-        // ).then(response => {
-        //     this.setState({
-        //         loading: false,
-        //         purchasing: false,
-        //     })
-        // }).catch(response => {
-        //     this.setState({
-        //         loading: false,
-        //         purchasing: false,
-        //     })
-        // })
-    // };
-
-    addIngredientHandler = (type) => {
-        this.setState({
-            ingredients: {
-                ...this.state.ingredients,
-                [type]: this.state.ingredients[type] + 1
-            },
-            totalPrice: this.state.totalPrice + INGREDIENTS_PRICES[type]
-        }, this.updatePurchasable);
-    };
-
-    removeIngredientHandler = (type) => {
-        this.setState({
-            ingredients: {
-                ...this.state.ingredients,
-                [type]: this.state.ingredients[type] - 1
-            },
-            totalPrice: this.state.totalPrice - INGREDIENTS_PRICES[type]
-        }, this.updatePurchasable);
-    };
-
     render() {
-        const disabledControls = {...this.state.ingredients};
+        const disabledControls = {...this.props.ings};
 
         for (let key in disabledControls) {
             disabledControls[key] = !disabledControls[key]
@@ -117,27 +58,22 @@ class BurgerBuilder extends Component {
         let burger = this.state.error ? 'Error' : <Spinner />;
         let orderSummary = <Spinner/>;
 
-        if (this.state.ingredients) {
+        if (this.props.ings) {
             burger = (
                 <Auxiliary>
-                    <Burger ingredients={this.state.ingredients}/>
+                    <Burger/>
                     <BuildControls
-                        totalPrice={this.state.totalPrice}
-                        ingredientAdded={this.addIngredientHandler}
-                        ingredientRemoved={this.removeIngredientHandler}
                         ordered={this.purchaseHandler}
                         disabled={disabledControls}
-                        purchasable={this.state.purchasable}
+                        purchasable={this.updatePurchasable(this.props.ings)}
                     />
                 </Auxiliary>
             );
 
             if (!this.state.loading) {
                 orderSummary = <OrderSummary
-                    price={this.state.totalPrice}
                     purchaseCancelled={this.purchaseCancelHandler}
                     purchaseContinued={this.purchaseContinueHandler}
-                    ingredients={this.state.ingredients}
                 />;
             }
         }
@@ -154,4 +90,14 @@ class BurgerBuilder extends Component {
     }
 }
 
-export default withAxiosErrorHandler(BurgerBuilder, axios)
+const mapStateToProps = state => {
+    return {
+        ings: state.burgerBuilder.ingredients,
+        price: state.burgerBuilder.price,
+    }
+};
+
+export default
+connect(mapStateToProps)(
+    withAxiosErrorHandler(BurgerBuilder, axios)
+)
