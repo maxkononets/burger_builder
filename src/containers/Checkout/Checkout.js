@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Route} from 'react-router-dom'
-import {withRouter} from 'react-router-dom'
+import {withRouter, Redirect} from 'react-router-dom'
 
 import CheckoutSummary  from '../../components/Order/CheckoutSummary/CheckoutSummary';
 import ContactData from './ContactData/ContactData'
@@ -18,8 +18,12 @@ class Checkout extends Component {
     };
 
     render() {
-        return (
-            <div className={classes.Checkout}>
+        let summary = (<Redirect to={'/'} />);
+
+        if (this.props.ingredients) {
+            const purchasedRedirect = this.props.purchased && <Redirect to={'/'} />;
+            summary = (<div className={classes.Checkout}>
+                { purchasedRedirect }
                 <CheckoutSummary
                     ingredients={this.props.ingredients}
                     cancelClicked={this.cancelHandler}
@@ -28,12 +32,11 @@ class Checkout extends Component {
                 <Route
                     path={`${this.props.match.url}/contact`}
                     exact
-                    render={() => (
-                        <ContactData />
-                    )}
+                    component={ContactData}
                 />
-            </div>
-        );
+            </div>);
+        }
+        return summary;
     }
 }
 
@@ -42,7 +45,8 @@ const mapStateToProps = state => {
     return {
         ingredients: state.burgerBuilder.ingredients,
         price: state.burgerBuilder.price,
+        purchased: state.order.purchased,
     }
 };
 
-export default connect(mapStateToProps)(withRouter(Checkout))
+export default connect( mapStateToProps )( withRouter( Checkout ) )

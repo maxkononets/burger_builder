@@ -1,4 +1,4 @@
-import * as actions from './burgerBuilderActionTypes'
+import * as actions from '../actions/actionTypes'
 
 const INGREDIENTS_PRICES = {
     bacon: 1.1,
@@ -8,13 +8,10 @@ const INGREDIENTS_PRICES = {
 };
 
 const initialState = {
-    ingredients: {
-        bacon: 0,
-        salad: 0,
-        cheese: 0,
-        meat: 0,
-    },
+    ingredients: null,
     price: 0,
+    loading: false,
+    error: false
 };
 
 const reducer = (state = initialState, {type, payload}) => {
@@ -28,6 +25,7 @@ const reducer = (state = initialState, {type, payload}) => {
                 },
                 price: state.price + INGREDIENTS_PRICES[payload.ingName],
             };
+
         case ( actions.REMOVE_INGREDIENT ):
             return {
                 ...state,
@@ -37,6 +35,7 @@ const reducer = (state = initialState, {type, payload}) => {
                 },
                 price: state.price - INGREDIENTS_PRICES[payload.ingName],
             };
+
         case ( actions.FLUSH_INGREDIENTS ):
             const ingredients = {...state.ingredients};
             for ( let ing in ingredients) {
@@ -47,6 +46,32 @@ const reducer = (state = initialState, {type, payload}) => {
                 ingredients,
                 price: 0,
             };
+
+        case ( actions.SET_INGREDIENTS ):
+            const ings = payload.ingredients;
+            let price = 0;
+
+            for ( let ing in ings) {
+                price += ings[ing] * INGREDIENTS_PRICES[ing];
+            }
+            return {
+                ...state,
+                ingredients: ings,
+                price,
+            };
+
+        case ( actions.SET_LOADING ):
+            return {
+                ...state,
+                loading: payload,
+            };
+
+        case ( actions.SET_ERROR_ON_LOADING ):
+            return {
+                ...state,
+                error: payload,
+            };
+
         default:
             return state;
     }

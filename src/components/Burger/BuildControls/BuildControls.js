@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import classes from './BuildControls.css'
 import BuildControl from "./BuildControl/BuildControl";
 import PropTypes from 'prop-types'
-import * as burgerBuilderActionTypes from "../../../store/reducers/burgerBuilder/burgerBuilderActionTypes";
+import * as burgerBuilderActionTypes from "../../../store/actions/actionTypes";
 
 const buildControls = (props) => {
     const controls = [

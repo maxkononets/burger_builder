@@ -9,26 +9,21 @@ import Modal from '../../components/UI/Modal/Modal';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withAxiosErrorHandler from '../../hoc/withAxiosErrorHandler/withAxiosErrorHandler';
 
+import * as burgerBuilderActions from '../../store/actions/burgerBuilder';
+import * as orderActions from '../../store/actions/order';
+
 import axios from '../../axios-orders';
 
 class BurgerBuilder extends Component {
     state = {
-        // ingredients: null,
-        // totalPrice: 0,
         purchasable: false,
         purchasing: false,
-        loading: false,
-        error: false
     };
 
-    // componentDidMount() {
-        // axios.get('/ingredients.json')
-        //     .then(response => this.setState({
-        //         ingredients: response.data
-        //     })).catch(() => this.setState({
-        //         error: true
-        //     }))
-    // }
+    componentDidMount() {
+        this.props.initIngredients();
+        this.props.purchaseBurgerInit();
+    }
 
     updatePurchasable = (ingredients) => {
         let sum = Object.values(ingredients)
@@ -55,7 +50,7 @@ class BurgerBuilder extends Component {
             disabledControls[key] = !disabledControls[key]
         }
 
-        let burger = this.state.error ? 'Error' : <Spinner />;
+        let burger = this.props.error ? 'Error' : <Spinner />;
         let orderSummary = <Spinner/>;
 
         if (this.props.ings) {
@@ -94,10 +89,19 @@ const mapStateToProps = state => {
     return {
         ings: state.burgerBuilder.ingredients,
         price: state.burgerBuilder.price,
+        error: state.burgerBuilder.error,
+        loading: state.burgerBuilder.loading,
+    }
+};
+
+const mapReducersToProps = dispatch => {
+    return {
+        initIngredients: () => dispatch(burgerBuilderActions.initIngredients()),
+        purchaseBurgerInit: () => dispatch(orderActions.purchaseBurgerInit()),
     }
 };
 
 export default
-connect(mapStateToProps)(
-    withAxiosErrorHandler(BurgerBuilder, axios)
-)
+    connect(mapStateToProps, mapReducersToProps)(
+        withAxiosErrorHandler(BurgerBuilder, axios)
+    )

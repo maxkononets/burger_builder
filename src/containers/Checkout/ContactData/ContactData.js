@@ -6,10 +6,9 @@ import Input from '../../../components/UI/Input/Input';
 
 import {withRouter} from 'react-router-dom'
 
-import axios from '../../../axios-orders';
 import classes from './ContactData.css';
 import {connect} from "react-redux";
-import * as burgerBuilderActionTypes from '../../../store/reducers/burgerBuilder/burgerBuilderActionTypes';
+import { purchaseBurger } from '../../../store/actions/order';
 
 class ContactData extends Component {
     state = {
@@ -113,30 +112,22 @@ class ContactData extends Component {
             }
         },
         formIsValid: false,
-        loading: false
     };
 
     orderHandler = (event) => {
         event.preventDefault();
-        this.setState({loading: true});
         const formData = {};
         for (let formElementIdentifier in this.state.orderForm) {
             formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
         }
-        const order = {
+
+        const orderData = {
             ingredients: this.props.ingredients,
             price: this.props.price,
             orderData: formData
         };
-        axios.post('/orders.json', order)
-            .then(() => {
-                this.setState({loading: false});
-                this.props.history.push('/');
-                this.props.flushIngredients();
-            })
-            .catch(() => {
-                this.setState({loading: false});
-            });
+
+        this.props.purchaseBurger(orderData)
     };
 
     checkValidity(value, rules) {
@@ -230,12 +221,14 @@ const mapStateToProps = state => {
     return {
         ingredients: state.burgerBuilder.ingredients,
         price: state.burgerBuilder.price,
+        loading: state.order.loading,
+        error: state.order.error,
     }
 };
 
 const mapReducersToProps = dispatch => {
     return {
-        flushIngredients: () => dispatch({type: burgerBuilderActionTypes.FLUSH_INGREDIENTS}),
+        purchaseBurger: orderData => dispatch(purchaseBurger(orderData)),
     }
 };
 

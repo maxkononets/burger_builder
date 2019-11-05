@@ -1,6 +1,5 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
-import qs from 'qs'
 import { connect } from 'react-redux';
 
 import Button from '../../UI/Button/Button'
@@ -20,7 +19,7 @@ const orderSummary = props => {
                     : <strong>{props.ingredients[igKey]}</strong>
                 </li>
             )
-        })
+        });
 
     return (
         <div className={classes.OrderSummary}>
