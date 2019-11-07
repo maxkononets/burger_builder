@@ -5,7 +5,7 @@ import Aux from '../../../../hoc/Auxiliary/auxiliary'
 import NavigationItem from './NavigationItem/NavigationItem'
 import classes from './NavigationItems.css'
 
-const navigationItems = props => {
+export const navigationItems = props => {
     let navItems = (<Aux>
         <NavigationItem
             link="/"
