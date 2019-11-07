@@ -8,7 +8,8 @@ import {withRouter} from 'react-router-dom'
 
 import classes from './ContactData.css';
 import {connect} from "react-redux";
-import { purchaseBurger } from '../../../store/actions/order';
+import {purchaseBurger} from '../../../store/actions/order';
+import {signInRedirect} from "../../../store/actions/auth";
 
 class ContactData extends Component {
     state = {
@@ -124,10 +125,12 @@ class ContactData extends Component {
         const orderData = {
             ingredients: this.props.ingredients,
             price: this.props.price,
-            orderData: formData
+            orderData: formData,
+            userId: this.props.userId,
         };
 
-        this.props.purchaseBurger(orderData)
+        this.props.purchaseBurger(orderData, this.props.token);
+        this.props.signInRedirect('/');
     };
 
     checkValidity(value, rules) {
@@ -221,6 +224,8 @@ const mapStateToProps = state => {
     return {
         ingredients: state.burgerBuilder.ingredients,
         price: state.burgerBuilder.price,
+        userId: state.auth.userId,
+        token: state.auth.authToken,
         loading: state.order.loading,
         error: state.order.error,
     }
@@ -228,7 +233,8 @@ const mapStateToProps = state => {
 
 const mapReducersToProps = dispatch => {
     return {
-        purchaseBurger: orderData => dispatch(purchaseBurger(orderData)),
+        purchaseBurger: (orderData, token) => dispatch(purchaseBurger(orderData, token)),
+        signInRedirect: path => dispatch(signInRedirect(path)),
     }
 };
 

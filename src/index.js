@@ -10,15 +10,18 @@ import * as serviceWorker from './serviceWorker';
 
 import burgerBuilder from './store/reducers/burgerBuilder';
 import order from './store/reducers/order';
+import auth from './store/reducers/auth';
 
 const reducers = combineReducers({
     burgerBuilder,
     order,
+    auth,
 });
 
-const logger = store => {
+const persistState = store => {
     return next => {
         return action => {
+            console.log(store.getState());
             const res = next(action);
             localStorage.setItem('store', JSON.stringify(store.getState()));
             return res
@@ -30,8 +33,9 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(
     reducers,
+    JSON.parse(localStorage.getItem('store')) || {},
     composeEnhancers(applyMiddleware(
-        logger,
+        persistState,
         thunk,
     ))
 );

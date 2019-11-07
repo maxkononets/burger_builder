@@ -45,7 +45,7 @@ const orderSummary = props => {
             </Link>
         </div>
     )
-}
+};
 
 const mapStateToProps = state => {
     return {

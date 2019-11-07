@@ -11,7 +11,7 @@ const burger = props => {
                 return <BurgerIngredient key={igKey + i} type={igKey} />
             })
         })
-        .reduce((arr, el) => arr.concat(...el), [])
+        .reduce((arr, el) => arr.concat(...el), []);
 
     if (transformedIngredients.length === 0) {
         transformedIngredients = <p>Please, start adding ingredients</p>
@@ -24,7 +24,7 @@ const burger = props => {
             <BurgerIngredient type="bread-bottom" />
         </div>
     )
-}
+};
 
 const mapStateToProps = state => {
     return {

@@ -3,10 +3,12 @@ import {Route} from 'react-router-dom'
 import {withRouter, Redirect} from 'react-router-dom'
 
 import CheckoutSummary  from '../../components/Order/CheckoutSummary/CheckoutSummary';
-import ContactData from './ContactData/ContactData'
 
 import classes from './Chcekout.css';
 import {connect} from "react-redux";
+import asyncComponent from "../../hoc/asyncComponent/asyncComponent";
+
+const  asyncContactData =  asyncComponent(() => import('./ContactData/ContactData'));
 
 class Checkout extends Component {
     cancelHandler = () => {
@@ -32,7 +34,7 @@ class Checkout extends Component {
                 <Route
                     path={`${this.props.match.url}/contact`}
                     exact
-                    component={ContactData}
+                    component={asyncContactData}
                 />
             </div>);
         }
